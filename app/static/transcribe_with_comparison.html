@@ -6,14 +6,14 @@
     <title>ASR: Transcribe With Comparison</title>
     <style>
       :root {
-        --bg: #000000;
-        --panel: #111827;
-        --muted: #94a3b8;
-        --text: #e5e7eb;
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --muted: #64748b;
+        --text: #0f172a;
         --accent: #22c55e;
         --accent-2: #38bdf8;
         --danger: #ef4444;
-        --border: #1f2937;
+        --border: #e2e8f0;
         --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           "Liberation Mono", "Courier New", monospace;
         --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
@@ -30,12 +30,12 @@
         color: var(--text);
         background: radial-gradient(
             1200px 600px at 10% -10%,
-            rgba(56, 189, 248, 0.06),
+            rgba(2, 132, 199, 0.08),
             transparent 60%
           ),
           radial-gradient(
             1000px 400px at 90% 0%,
-            rgba(34, 197, 94, 0.06),
+            rgba(16, 185, 129, 0.08),
             transparent 60%
           ),
           var(--bg);
@@ -57,19 +57,19 @@
         margin-bottom: 24px;
       }
       .panel {
-        background: rgba(17, 24, 39, 0.8);
+        background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(6px);
         border: 1px solid var(--border);
         border-radius: 12px;
         padding: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
       }
+      /* --- THIS IS THE CORRECTED CODE --- */
       .row {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 12px;
-        align-items: center;
-        margin-bottom: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px; /* A smaller gap looks better for vertical stacking */
+        margin-bottom: 16px;
       }
       .row label {
         color: var(--muted);
@@ -79,19 +79,28 @@
       select,
       textarea {
         width: 100%;
+        box-sizing: border-box; /* Added for better box model handling */
         color: var(--text);
-        background: #0b1020;
+        background: #ffffff;
         border: 1px solid var(--border);
         border-radius: 8px;
         padding: 10px 12px;
         outline: none;
       }
+      input[type="file"] {
+        width: 100%;
+        box-sizing: border-box; /* Added for better box model handling */
+        color: var(--muted);
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 9px 12px;
+        outline: none;
+        display: block;
+      }
       textarea {
         min-height: 90px;
         resize: vertical;
-      }
-      input[type="file"] {
-        color: var(--muted);
       }
       .checkbox {
         display: flex;
@@ -107,7 +116,7 @@
       }
       button {
         background: linear-gradient(135deg, var(--accent), #16a34a);
-        color: white;
+        color: #ffffff;
         border: none;
         border-radius: 10px;
         padding: 10px 14px;
@@ -133,7 +142,7 @@
         gap: 14px;
       }
       .card {
-        background: #0b1222;
+        background: #ffffff;
         border: 1px solid var(--border);
         border-radius: 10px;
         padding: 12px;
@@ -157,16 +166,16 @@
         gap: 6px 10px;
         font-family: var(--mono);
         font-size: 12px;
-        color: #cbd5e1;
+        color: #334155;
       }
       .kv div.key {
         color: var(--muted);
       }
       .error {
         margin-top: 18px;
-        color: #fecaca;
-        background: #451a1a;
-        border: 1px solid #7f1d1d;
+        color: #991b1b;
+        background: #fee2e2;
+        border: 1px solid #fecaca;
         padding: 10px 12px;
         border-radius: 8px;
         display: none;
@@ -246,33 +255,7 @@
               required
             ></textarea>
           </div>
-          <div class="row">
-            <label for="decoder">Decoder</label>
-            <select id="decoder" name="decoder">
-              <option value="rnnt" selected>rnnt</option>
-              <option value="ctc">ctc</option>
-            </select>
-          </div>
-          <!-- <div class="row">
-            <label>Options</label>
-            <div>
-              <label class="checkbox"
-                ><input id="normalize" name="normalize" type="checkbox" />
-                Normalize audio</label
-              >
-              <label class="checkbox"
-                ><input
-                  id="return_segments"
-                  name="return_segments"
-                  type="checkbox"
-                />
-                Return segments</label
-              >
-              <div class="hint">
-                Max upload and formats are enforced server-side.
-              </div>
-            </div>
-          </div> -->
+
           <div class="actions">
             <button id="submit" type="submit">Transcribe & Compare</button>
             <span id="loading" style="display: none"
