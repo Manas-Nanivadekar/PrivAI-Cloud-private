@@ -6,7 +6,8 @@ import tempfile
 from typing import Optional
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
 from .audio_io import prepare_audio_for_model
@@ -50,6 +51,24 @@ def _load_model():
 
     engine.load()
     app.state.ready = True
+
+
+# Serve a simple static frontend for manual testing
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+try:
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+except RuntimeError:
+    # In case directory is missing during certain build steps
+    pass
+
+
+@app.get("/", response_class=FileResponse)
+def index():
+    """Serve the demo page for /transcribe_with_comparison."""
+    index_path = os.path.join(static_dir, "transcribe_with_comparison.html")
+    if not os.path.exists(index_path):
+        raise HTTPException(status_code=404, detail="Demo page not found")
+    return FileResponse(index_path)
 
 
 @app.get("/healthz", response_class=PlainTextResponse)
