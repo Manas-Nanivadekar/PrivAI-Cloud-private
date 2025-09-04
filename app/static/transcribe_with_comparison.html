@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -6,7 +6,7 @@
     <title>ASR: Transcribe With Comparison</title>
     <style>
       :root {
-        --bg: #0f172a;
+        --bg: #000000;
         --panel: #111827;
         --muted: #94a3b8;
         --text: #e5e7eb;
@@ -14,68 +14,237 @@
         --accent-2: #38bdf8;
         --danger: #ef4444;
         --border: #1f2937;
-        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
       }
-      html, body { height: 100%; }
+      html,
+      body {
+        height: 100%;
+      }
       body {
         margin: 0;
         font-family: var(--sans);
         color: var(--text);
-        background: radial-gradient(1200px 600px at 10% -10%, rgba(56,189,248,.06), transparent 60%),
-                    radial-gradient(1000px 400px at 90% 0%, rgba(34,197,94,.06), transparent 60%),
-                    var(--bg);
+        background: radial-gradient(
+            1200px 600px at 10% -10%,
+            rgba(56, 189, 248, 0.06),
+            transparent 60%
+          ),
+          radial-gradient(
+            1000px 400px at 90% 0%,
+            rgba(34, 197, 94, 0.06),
+            transparent 60%
+          ),
+          var(--bg);
       }
-      .wrap { max-width: 980px; margin: 0 auto; padding: 32px 16px 64px; }
-      h1 { font-size: 20px; font-weight: 700; margin: 0 0 18px; letter-spacing: 0.3px; }
-      p.desc { color: var(--muted); margin-top: 0; margin-bottom: 24px; }
-      .panel { background: rgba(17,24,39,.8); backdrop-filter: blur(6px); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-      .row { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; align-items: center; margin-bottom: 14px; }
-      .row label { color: var(--muted); font-size: 14px; }
-      input[type="text"], select, textarea { width: 100%; color: var(--text); background: #0b1020; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; outline: none; }
-      textarea { min-height: 90px; resize: vertical; }
-      input[type="file"] { color: var(--muted); }
-      .checkbox { display: flex; align-items: center; gap: 8px; color: var(--muted); }
-      .actions { margin-top: 16px; display: flex; gap: 10px; align-items: center; }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 32px 16px 64px;
+      }
+      h1 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 18px;
+        letter-spacing: 0.3px;
+      }
+      p.desc {
+        color: var(--muted);
+        margin-top: 0;
+        margin-bottom: 24px;
+      }
+      .panel {
+        background: rgba(17, 24, 39, 0.8);
+        backdrop-filter: blur(6px);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .row label {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      input[type="text"],
+      select,
+      textarea {
+        width: 100%;
+        color: var(--text);
+        background: #0b1020;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        outline: none;
+      }
+      textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      input[type="file"] {
+        color: var(--muted);
+      }
+      .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+      }
+      .actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
       button {
         background: linear-gradient(135deg, var(--accent), #16a34a);
-        color: white; border: none; border-radius: 10px; padding: 10px 14px; font-weight: 600; cursor: pointer;
-        box-shadow: 0 6px 18px rgba(34,197,94,.25);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(34, 197, 94, 0.25);
       }
-      button:disabled { opacity: .6; cursor: not-allowed; }
-      .hint { color: var(--muted); font-size: 12px; }
-      .results { margin-top: 24px; display: none; }
-      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-      .card { background: #0b1222; border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
-      .card h3 { margin: 0 0 8px; font-size: 14px; color: var(--muted); font-weight: 600; }
-      .mono { font-family: var(--mono); white-space: pre-wrap; word-break: break-word; font-size: 13px; line-height: 1.45; }
-      .kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; font-family: var(--mono); font-size: 12px; color: #cbd5e1 }
-      .kv div.key { color: var(--muted); }
-      .error { margin-top: 18px; color: #fecaca; background: #451a1a; border: 1px solid #7f1d1d; padding: 10px 12px; border-radius: 8px; display: none; }
-      .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.25); border-top-color: white; border-radius: 50%; display: inline-block; animation: spin 1s linear infinite; }
-      @keyframes spin { to { transform: rotate(360deg); } }
-      footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
-      @media (max-width: 760px) { .row { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .results {
+        margin-top: 24px;
+        display: none;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .card {
+        background: #0b1222;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+      }
+      .card h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .mono {
+        font-family: var(--mono);
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .kv {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 6px 10px;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: #cbd5e1;
+      }
+      .kv div.key {
+        color: var(--muted);
+      }
+      .error {
+        margin-top: 18px;
+        color: #fecaca;
+        background: #451a1a;
+        border: 1px solid #7f1d1d;
+        padding: 10px 12px;
+        border-radius: 8px;
+        display: none;
+      }
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        border-top-color: white;
+        border-radius: 50%;
+        display: inline-block;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      footer {
+        margin-top: 28px;
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      @media (max-width: 760px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="wrap">
       <h1>Transcribe With Comparison</h1>
-      <p class="desc">Upload an audio file, set language and reference text. The API will transcribe and compute WER.</p>
+      <p class="desc">
+        Upload an audio file, set language and reference text.
+        IndicConformer600M
+        <a
+          href="https://huggingface.co/ai4bharat/indic-conformer-600m-multilingual"
+          target="_blank"
+          >model</a
+        >
+        will transcribe the audio and compute (WER) against the reference text.
+      </p>
 
       <div class="panel">
         <form id="form">
           <div class="row">
             <label for="file">Audio file</label>
-            <input id="file" name="file" type="file" accept="audio/*" required />
+            <input
+              id="file"
+              name="file"
+              type="file"
+              accept="audio/*"
+              required
+            />
           </div>
           <div class="row">
             <label for="language">Language</label>
-            <input id="language" name="language" type="text" placeholder="e.g., hi, mr, ta" required />
+            <input
+              id="language"
+              name="language"
+              type="text"
+              placeholder="e.g., hi, mr, ta"
+              required
+            />
           </div>
           <div class="row">
             <label for="reference_transcription">Reference transcription</label>
-            <textarea id="reference_transcription" name="reference_transcription" placeholder="Ground truth text" required></textarea>
+            <textarea
+              id="reference_transcription"
+              name="reference_transcription"
+              placeholder="Ground truth text"
+              required
+            ></textarea>
           </div>
           <div class="row">
             <label for="decoder">Decoder</label>
@@ -84,17 +253,31 @@
               <option value="ctc">ctc</option>
             </select>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <label>Options</label>
             <div>
-              <label class="checkbox"><input id="normalize" name="normalize" type="checkbox" /> Normalize audio</label>
-              <label class="checkbox"><input id="return_segments" name="return_segments" type="checkbox" /> Return segments</label>
-              <div class="hint">Max upload and formats are enforced server-side.</div>
+              <label class="checkbox"
+                ><input id="normalize" name="normalize" type="checkbox" />
+                Normalize audio</label
+              >
+              <label class="checkbox"
+                ><input
+                  id="return_segments"
+                  name="return_segments"
+                  type="checkbox"
+                />
+                Return segments</label
+              >
+              <div class="hint">
+                Max upload and formats are enforced server-side.
+              </div>
             </div>
-          </div>
+          </div> -->
           <div class="actions">
             <button id="submit" type="submit">Transcribe & Compare</button>
-            <span id="loading" style="display:none"><span class="spinner"></span> Processing…</span>
+            <span id="loading" style="display: none"
+              ><span class="spinner"></span> Processing…</span
+            >
           </div>
           <div id="error" class="error"></div>
         </form>
@@ -112,77 +295,93 @@
             <div class="card">
               <h3>Summary</h3>
               <div class="kv">
-                <div class="key">request_id</div><div id="request_id"></div>
-                <div class="key">language</div><div id="res_language"></div>
-                <div class="key">decoder</div><div id="res_decoder"></div>
-                <div class="key">duration_ms</div><div id="duration_ms"></div>
-                <div class="key">processing_ms</div><div id="processing_ms"></div>
-                <div class="key">model_version</div><div id="model_version"></div>
-                <div class="key">wer</div><div id="wer"></div>
+                <div class="key">request_id</div>
+                <div id="request_id"></div>
+                <div class="key">language</div>
+                <div id="res_language"></div>
+                <div class="key">decoder</div>
+                <div id="res_decoder"></div>
+                <div class="key">duration_ms</div>
+                <div id="duration_ms"></div>
+                <div class="key">processing_ms</div>
+                <div id="processing_ms"></div>
+                <div class="key">model_version</div>
+                <div id="model_version"></div>
+                <div class="key">wer</div>
+                <div id="wer"></div>
               </div>
             </div>
             <div class="card">
               <h3>WER Details</h3>
-              <pre id="wer_details" class="mono" style="margin:0"></pre>
+              <pre id="wer_details" class="mono" style="margin: 0"></pre>
             </div>
           </div>
         </div>
       </div>
-
-      <footer>
-        Served by FastAPI. The form posts to <code>/transcribe_with_comparison</code> via fetch.
-      </footer>
     </div>
 
     <script>
-      const form = document.getElementById('form');
-      const submitBtn = document.getElementById('submit');
-      const loading = document.getElementById('loading');
-      const errorBox = document.getElementById('error');
-      const results = document.getElementById('results');
+      const form = document.getElementById("form");
+      const submitBtn = document.getElementById("submit");
+      const loading = document.getElementById("loading");
+      const errorBox = document.getElementById("error");
+      const results = document.getElementById("results");
 
       function showError(msg) {
-        errorBox.style.display = 'block';
+        errorBox.style.display = "block";
         errorBox.textContent = msg;
       }
       function clearError() {
-        errorBox.style.display = 'none';
-        errorBox.textContent = '';
+        errorBox.style.display = "none";
+        errorBox.textContent = "";
       }
       function setBusy(b) {
         submitBtn.disabled = b;
-        loading.style.display = b ? 'inline-flex' : 'none';
+        loading.style.display = b ? "inline-flex" : "none";
       }
       function setResults(data) {
-        results.style.display = 'block';
-        document.getElementById('model_text').textContent = data.model_transcription ?? '';
-        document.getElementById('ref_text').textContent = data.reference_transcription ?? '';
-        document.getElementById('request_id').textContent = data.request_id ?? '';
-        document.getElementById('res_language').textContent = data.language ?? '';
-        document.getElementById('res_decoder').textContent = data.decoder ?? '';
-        document.getElementById('duration_ms').textContent = data.duration_ms ?? '';
-        document.getElementById('processing_ms').textContent = data.processing_ms ?? '';
-        document.getElementById('model_version').textContent = data.model_version ?? '';
-        document.getElementById('wer').textContent = data.wer ?? '';
-        const details = (typeof data.wer_details === 'object' && data.wer_details) ? JSON.stringify(data.wer_details, null, 2) : '';
-        document.getElementById('wer_details').textContent = details;
+        results.style.display = "block";
+        document.getElementById("model_text").textContent =
+          data.model_transcription ?? "";
+        document.getElementById("ref_text").textContent =
+          data.reference_transcription ?? "";
+        document.getElementById("request_id").textContent =
+          data.request_id ?? "";
+        document.getElementById("res_language").textContent =
+          data.language ?? "";
+        document.getElementById("res_decoder").textContent = data.decoder ?? "";
+        document.getElementById("duration_ms").textContent =
+          data.duration_ms ?? "";
+        document.getElementById("processing_ms").textContent =
+          data.processing_ms ?? "";
+        document.getElementById("model_version").textContent =
+          data.model_version ?? "";
+        document.getElementById("wer").textContent = data.wer ?? "";
+        const details =
+          typeof data.wer_details === "object" && data.wer_details
+            ? JSON.stringify(data.wer_details, null, 2)
+            : "";
+        document.getElementById("wer_details").textContent = details;
       }
 
-      form.addEventListener('submit', async (e) => {
+      form.addEventListener("submit", async (e) => {
         e.preventDefault();
         clearError();
-        results.style.display = 'none';
+        results.style.display = "none";
         const fd = new FormData(form);
-        if (!fd.get('file')) { showError('Please choose an audio file.'); return; }
+        if (!fd.get("file")) {
+          showError("Please choose an audio file.");
+          return;
+        }
         setBusy(true);
         try {
-          const res = await fetch('/transcribe_with_comparison', {
-            method: 'POST',
-            body: fd
+          const res = await fetch("/transcribe_with_comparison", {
+            method: "POST",
+            body: fd,
           });
-          const contentType = res.headers.get('content-type') || '';
+          const contentType = res.headers.get("content-type") || "";
           if (!res.ok) {
-            if (contentType.includes('application/json')) {
+            if (contentType.includes("application/json")) {
               const j = await res.json();
               throw new Error(j.detail || JSON.stringify(j));
             } else {
@@ -190,7 +389,9 @@
               throw new Error(t || `Request failed with ${res.status}`);
             }
           }
-          const data = contentType.includes('application/json') ? await res.json() : {};
+          const data = contentType.includes("application/json")
+            ? await res.json()
+            : {};
           setResults(data);
         } catch (err) {
           showError(err?.message || String(err));
@@ -200,5 +401,4 @@
       });
     </script>
   </body>
-  </html>
-
+</html>
